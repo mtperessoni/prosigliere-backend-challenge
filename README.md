@@ -1,215 +1,107 @@
-# Blog Platform API
+# Post and Comment API
 
-A RESTful API for managing a simple blogging platform built with NestJS, following Domain-Driven Design (DDD) principles and Clean Architecture.
+This project is a simple API designed to manage posts and comments. It provides four main endpoints:
 
-## Features
+- **Create Post** — Create a new post.
+- **Add Comment** — Add a comment to a specific post.
+- **Get All Posts** — Retrieve a list of all posts (with caching).
+- **Get Post By ID** — Retrieve a specific post by its ID (with caching).
 
-- Create and retrieve blog posts
-- Add comments to blog posts
-- View post details with associated comments
-- PostgreSQL database with Prisma ORM
+## 🛠️ Tech Stack
 
-## Prerequisites
+- **Backend:** NestJS + TypeScript
+- **Database:** PostgreSQL
+- **Cache:** Redis
+- **Testing:** Jest
+- **Containerization:** Docker & Docker Compose
 
-- Node.js (v14 or higher)
-- Docker and Docker Compose
-- npm or yarn
+## 🚀 Running Locally with Docker
 
-## Setup
+Make sure you have **Docker** and **Docker Compose** installed.
 
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd <repository-name>
-```
-
-2. Install dependencies:
+1. Clone this repository:
 
 ```bash
-npm install
+git clone https://github.com/mtperessoni/prosigliere-backend-challenge.git
+cd prosigliere-backend-challenge
 ```
 
-3. Set up environment variables:
-   Create a `.env` file in the root directory with the following content:
-
-```
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/blog_db?schema=public"
-```
-
-4. Start the PostgreSQL database:
+2. Run the project with Docker:
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
-5. Run Prisma migrations:
+3. The API will be available at:
 
-```bash
-npx prisma migrate dev
+```
+http://localhost:3000
 ```
 
-## Running the Application
+## 📜 API Endpoints
 
-Development mode:
+| Method | Endpoint              | Description                   |
+| ------ | --------------------- | ----------------------------- |
+| POST   | `/posts`              | Create a new post             |
+| POST   | `/posts/:id/comments` | Add a comment to a post       |
+| GET    | `/posts`              | Get all posts (with cache)    |
+| GET    | `/posts/:id`          | Get a post by ID (with cache) |
 
-```bash
-npm run start:dev
-```
+## 🧪 API Testing
 
-Production mode:
+In the `insomnia` folder, you'll find an `api.yaml` file containing a collection of pre-configured requests for testing all API endpoints. You can import this file into Insomnia to quickly test the API functionality.
 
-```bash
-npm run build
-npm run start:prod
-```
+## ⚙️ Caching
 
-## API Endpoints
+- Caching is applied to:
+  - **Get All Posts**
+  - **Get Post By ID**
 
-- `GET /api/posts` - Get all blog posts with comment counts
-- `POST /api/posts` - Create a new blog post
-- `GET /api/posts/{id}` - Get a specific blog post with its comments
-- `POST /api/posts/{id}/comments` - Add a comment to a blog post
+This improves read performance and reduces the load on the database for frequently requested data.
 
-## Testing
+## 🏗️ Areas for Improvement
 
-Run unit tests:
+### 1. **Optimizing Count Operations**
+
+- **Problem:** Counting the number of posts or comments (`SELECT COUNT(*)`) on large tables can become a performance bottleneck, even with caching.
+- **Improvement:** Introduce a dedicated table to store the counts of:
+  - Total posts
+  - Total comments per post
+- **Trade-offs:**
+  - ✅ Pros: Reduces expensive aggregate queries; improves performance at scale.
+  - ❌ Cons: Adds complexity to maintain data consistency, requiring updates on insert/delete operations.
+
+### 2. **Asynchronous Post Creation**
+
+- **Improvement:** Move the post creation process to a message queue (e.g., RabbitMQ, AWS SQS, Kafka).
+- **Benefits:**
+  - Non-blocking request handling.
+  - Improved scalability under high load.
+  - Decouples write operations from the API response time.
+- **Trade-offs:**
+  - Adds complexity in error handling, retries, and monitoring.
+  - Potential delay between request and the actual availability of the post.
+
+### 3. **Cache Invalidation for Comments**
+
+- **Current Limitation:** The current strategy invalidates the entire cache whenever a new post or comment is added.
+- **Improvement:** Implement fine-grained cache invalidation:
+
+  - When a new post is created:
+    - Invalidate the cache related to paginated post listings (e.g., /posts?page=1), since the pagination order could change.
+  - When a new comment is added:
+    - Invalidate the cache for:
+      - The post listing (if it includes comment counts or metadata affected by the comment).
+      - The specific post detail (/posts/:id), since the post's comment count or latest comment may change.
+
+## 🧪 Running Tests
+
+Run unit tests with:
 
 ```bash
 npm run test
 ```
 
-## Project Structure
+## 📄 License
 
-The project follows Domain-Driven Design principles with the following structure:
-
-```
-src/
-├── modules/
-│   └── post/
-│       ├── domain/
-│       │   ├── entities/
-│       │   └── repositories/
-│       ├── use-cases/
-│       ├── infra/
-│       │   └── repositories/
-│       └── controllers/
-└── shared/
-    └── infra/
-        └── prisma/
-```
-
-## Next Steps
-
-If I had more time, I would:
-
-1. Add input validation using class-validator and class-transformer
-2. Implement error handling middleware
-3. Add authentication and authorization
-4. Add pagination for the posts list endpoint
-5. Implement caching for frequently accessed posts
-6. Add more comprehensive test coverage
-7. Add API documentation using Swagger
-8. Implement logging and monitoring
-9. Add rate limiting
-10. Set up CI/CD pipeline
-
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
