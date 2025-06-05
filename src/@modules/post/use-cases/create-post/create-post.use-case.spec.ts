@@ -14,7 +14,7 @@ describe('CreatePostUseCase', () => {
   const mockCacheManager = {
     get: jest.fn().mockImplementation(async () => {}),
     set: jest.fn().mockImplementation(async () => {}),
-    del: jest.fn().mockImplementation(async () => {}),
+    delByPrefix: jest.fn().mockImplementation(async () => {}),
     clear: jest.fn().mockImplementation(async () => {}),
   };
 
@@ -59,6 +59,6 @@ describe('CreatePostUseCase', () => {
 
     expect(result).toEqual(expectedPost);
     expect(mockRepository.create).toHaveBeenCalledWith(postData);
-    expect(mockCacheManager.clear).toHaveBeenCalled();
+    expect(mockCacheManager.delByPrefix).toHaveBeenCalled();
   });
 });

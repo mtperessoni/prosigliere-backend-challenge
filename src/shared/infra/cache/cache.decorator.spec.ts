@@ -39,7 +39,7 @@ describe('Cacheable Decorator', () => {
     mockCacheManager = {
       get: jest.fn(),
       set: jest.fn(),
-      del: jest.fn(),
+      delByPrefix: jest.fn(),
       clear: jest.fn(),
     };
 

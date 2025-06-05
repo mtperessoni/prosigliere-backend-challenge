@@ -4,6 +4,7 @@ import { BlogPost } from '@/@modules/post/domain/entities/blog-post.entity';
 import { BLOG_POST_REPOSITORY } from '@/@modules/post/domain/repositories/tokens.repository';
 import { ICacheManager } from '@/shared/interfaces/cache/cache.interface';
 import { CACHE_MANAGER } from '@/shared/interfaces/cache/tokens.cache';
+import { CACHE_KEYS } from '../../domain/constants/cache-keys';
 
 @Injectable()
 export class CreatePostUseCase {
@@ -17,7 +18,7 @@ export class CreatePostUseCase {
   async execute(data: { title: string; content: string }): Promise<BlogPost> {
     const post = await this.blogPostRepository.create(data);
 
-    await this.cacheManager.clear();
+    await this.cacheManager.delByPrefix(CACHE_KEYS.ALL_POSTS);
     return post;
   }
 }

@@ -35,10 +35,17 @@ export class RedisCacheManager implements ICacheManager {
     } else {
       await this.redis.set(key, stringValue);
     }
+    const prefix = key.split(':')[0];
+    await this.redis.sadd(`keys:${prefix}`, key);
   }
 
-  async del(key: string): Promise<void> {
-    await this.redis.del(key);
+  async delByPrefix(prefix: string): Promise<void> {
+    const keys = await this.redis.smembers(`keys:${prefix}`);
+    console.log(keys);
+    if (keys.length) {
+      await this.redis.del(...keys);
+      await this.redis.del(`keys:${prefix}`);
+    }
   }
 
   async clear(): Promise<void> {
