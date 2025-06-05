@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { IBlogPostRepository } from '../../domain/repositories/blog-post.repository.interface';
-import { BlogPost } from '../../domain/entities/blog-post.entity';
-import { BLOG_POST_REPOSITORY } from '../../domain/repositories/tokens.repository';
+import { IBlogPostRepository } from '@/@modules/post/domain/repositories/blog-post.repository.interface';
+import { BlogPost } from '@/@modules/post/domain/entities/blog-post.entity';
+import { BLOG_POST_REPOSITORY } from '@/@modules/post/domain/repositories/tokens.repository';
 import { Cacheable } from '@/shared/infra/cache/cache.decorator';
 import { CACHE_MANAGER } from '@/shared/interfaces/cache/tokens.cache';
 import { ICacheManager } from '@/shared/interfaces/cache/cache.interface';

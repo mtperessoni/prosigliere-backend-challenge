@@ -5,10 +5,11 @@ import { GetPostByIdUseCase } from '../use-cases/get-post/get-post-by-id.use-cas
 import { AddCommentUseCase } from '../use-cases/add-comment/add-comment.use-case';
 import { BlogPost } from '../domain/entities/blog-post.entity';
 import { Comment } from '../domain/entities/comment.entity';
-import { CreatePostDto } from './dto/create-post.dto';
-import { AddCommentDto } from './dto/add-comment.dto';
-import { PaginationDto } from './dto/pagination.dto';
+import { CreatePostDto } from './dto/request/create-post.dto';
+import { AddCommentDto } from './dto/request/add-comment.dto';
+import { PaginationDto } from './dto/request/pagination.dto';
 import { PaginatedResult } from '@/shared/interfaces/pagination/pagination.interface';
+import { PostSummaryDto } from './dto/response/post-summary.dto';
 
 @Controller('posts')
 export class PostController {
@@ -20,8 +21,12 @@ export class PostController {
   ) {}
 
   @Get()
-  async getAllPosts(@Query() pagination: PaginationDto): Promise<PaginatedResult<BlogPost>> {
-    return this.getPostsUseCase.execute(pagination);
+  async getAllPosts(@Query() pagination: PaginationDto): Promise<PaginatedResult<PostSummaryDto>> {
+    const result = await this.getPostsUseCase.execute(pagination);
+    return {
+      ...result,
+      data: result.data.map((post) => new PostSummaryDto(post)),
+    };
   }
 
   @Post()

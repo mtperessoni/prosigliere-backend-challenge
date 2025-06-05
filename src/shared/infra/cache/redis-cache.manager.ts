@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { ICacheManager } from '../../interfaces/cache/cache.interface';
+import { ICacheManager } from '@/shared/interfaces/cache/cache.interface';
 
 @Injectable()
 export class RedisCacheManager implements ICacheManager {
@@ -10,6 +10,12 @@ export class RedisCacheManager implements ICacheManager {
     this.redis = new Redis({
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      maxRetriesPerRequest: 3,
     });
   }
 

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../../shared/infra/prisma/prisma.service';
+import { PrismaService } from '@/shared/infra/prisma/prisma.service';
 import {
   IBlogPostRepository,
   BlogPostPersistenceDTO,
-} from '../../../domain/repositories/blog-post.repository.interface';
-import { BlogPost } from '../../../domain/entities/blog-post.entity';
-import { Comment } from '../../../domain/entities/comment.entity';
+} from '@/@modules/post/domain/repositories/blog-post.repository.interface';
+import { BlogPost } from '@/@modules/post/domain/entities/blog-post.entity';
+import { Comment } from '@/@modules/post/domain/entities/comment.entity';
 import { PaginatedResult } from '@/shared/interfaces/pagination/pagination.interface';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class BlogPostRepository implements IBlogPostRepository {
     ]);
 
     return {
-      data: posts.map((post) => new BlogPost(post)),
+      data: posts.map((post) => new BlogPost({ ...post, commentsCount: post._count.comments })),
       total,
       page,
       limit,

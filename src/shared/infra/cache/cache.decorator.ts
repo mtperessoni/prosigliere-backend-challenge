@@ -1,4 +1,4 @@
-import { ICacheManager } from '../../interfaces/cache/cache.interface';
+import { ICacheManager } from '@/shared/interfaces/cache/cache.interface';
 import { Logger } from '@nestjs/common';
 
 export function Cacheable<T extends Record<string, ICacheManager>>(

@@ -1,17 +1,21 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { IBlogPostRepository } from '../../domain/repositories/blog-post.repository.interface';
-import { BlogPost } from '../../domain/entities/blog-post.entity';
-import { BLOG_POST_REPOSITORY } from '../../domain/repositories/tokens.repository';
+import { BlogPost } from '@/@modules/post/domain/entities/blog-post.entity';
+import { BLOG_POST_REPOSITORY } from '@/@modules/post/domain/repositories/tokens.repository';
 import { CreatePostUseCase } from './create-post.use-case';
-import { BlogPostRepository } from '../../infra/repositories/prisma/blog-post.repository';
+import { CACHE_MANAGER } from '@/shared/interfaces/cache/tokens.cache';
 
 describe('CreatePostUseCase', () => {
   let useCase: CreatePostUseCase;
-  let repository: IBlogPostRepository;
 
   const mockRepository = {
-    create: jest.fn(),
+    create: jest.fn().mockImplementation(async () => {}),
+  };
+
+  const mockCacheManager = {
+    get: jest.fn().mockImplementation(async () => {}),
+    set: jest.fn().mockImplementation(async () => {}),
+    del: jest.fn().mockImplementation(async () => {}),
+    clear: jest.fn().mockImplementation(async () => {}),
   };
 
   beforeEach(async () => {
@@ -22,11 +26,14 @@ describe('CreatePostUseCase', () => {
           provide: BLOG_POST_REPOSITORY,
           useValue: mockRepository,
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
+        },
       ],
     }).compile();
 
     useCase = module.get<CreatePostUseCase>(CreatePostUseCase);
-    repository = module.get<IBlogPostRepository>(BlogPostRepository);
   });
 
   it('should be defined', () => {
@@ -39,7 +46,7 @@ describe('CreatePostUseCase', () => {
       content: 'Test Content',
     };
     const expectedPost = new BlogPost({
-      id: '1',
+      id: 1,
       ...postData,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -51,6 +58,7 @@ describe('CreatePostUseCase', () => {
     const result = await useCase.execute(postData);
 
     expect(result).toEqual(expectedPost);
-    expect(repository.create).toHaveBeenCalledWith(postData);
+    expect(mockRepository.create).toHaveBeenCalledWith(postData);
+    expect(mockCacheManager.clear).toHaveBeenCalled();
   });
 });
