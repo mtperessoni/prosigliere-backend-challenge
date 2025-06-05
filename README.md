@@ -1,6 +1,6 @@
 # Blog Platform API
 
-A RESTful API for managing a simple blogging platform built with NestJS, following Domain-Driven Design (DDD) principles and Clean Architecture.
+A RESTful API for managing a simple blogging platform built with NestJS.
 
 ## Features
 
