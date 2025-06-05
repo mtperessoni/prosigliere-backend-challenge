@@ -61,15 +61,17 @@ This improves read performance and reduces the load on the database for frequent
 
 ## 🏗️ Areas for Improvement
 
-### 1. **Optimizing Count Operations**
+### 1. **Cache Invalidation for Comments**
 
-- **Problem:** Counting the number of posts or comments (`SELECT COUNT(*)`) on large tables can become a performance bottleneck, even with caching.
-- **Improvement:** Introduce a dedicated table to store the counts of:
-  - Total posts
-  - Total comments per post
-- **Trade-offs:**
-  - ✅ Pros: Reduces expensive aggregate queries; improves performance at scale.
-  - ❌ Cons: Adds complexity to maintain data consistency, requiring updates on insert/delete operations.
+- **Current Limitation:** The current strategy invalidates the entire cache whenever a new post or comment is added.
+- **Improvement:** Implement fine-grained cache invalidation:
+
+  - When a new post is created:
+    - Invalidate the cache related to paginated post listings (e.g., /posts?page=1), since the pagination order could change.
+  - When a new comment is added:
+    - Invalidate the cache for:
+      - The post listing (if it includes comment counts or metadata affected by the comment).
+      - The specific post detail (/posts/:id), since the post's comment count or latest comment may change.
 
 ### 2. **Asynchronous Post Creation**
 
@@ -82,17 +84,15 @@ This improves read performance and reduces the load on the database for frequent
   - Adds complexity in error handling, retries, and monitoring.
   - Potential delay between request and the actual availability of the post.
 
-### 3. **Cache Invalidation for Comments**
+### 3. **Optimizing Count Operations**
 
-- **Current Limitation:** The current strategy invalidates the entire cache whenever a new post or comment is added.
-- **Improvement:** Implement fine-grained cache invalidation:
-
-  - When a new post is created:
-    - Invalidate the cache related to paginated post listings (e.g., /posts?page=1), since the pagination order could change.
-  - When a new comment is added:
-    - Invalidate the cache for:
-      - The post listing (if it includes comment counts or metadata affected by the comment).
-      - The specific post detail (/posts/:id), since the post's comment count or latest comment may change.
+- **Problem:** Counting the number of posts or comments (`SELECT COUNT(*)`) on large tables can become a performance bottleneck, even with caching.
+- **Improvement:** Introduce a dedicated table to store the counts of:
+  - Total posts
+  - Total comments per post
+- **Trade-offs:**
+  - ✅ Pros: Reduces expensive aggregate queries; improves performance at scale.
+  - ❌ Cons: Adds complexity to maintain data consistency, requiring updates on insert/delete operations.
 
 ## 🧪 Running Tests
 
