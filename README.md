@@ -59,7 +59,7 @@ In the `insomnia` folder, you'll find an `api.yaml` file containing a collection
 
 This improves read performance and reduces the load on the database for frequently requested data.
 
-## 🏗️ Areas for Improvement
+## 🏗️ Next Steps
 
 ### 1. **API Documentation with Swagger (OpenAPI)**
 
@@ -73,11 +73,9 @@ This improves read performance and reduces the load on the database for frequent
 
 ### 3. **Cache Invalidation**
 
-- **Current Limitation:** The current strategy invalidates the entire cache whenever a new post or comment is added.
+- **Current Limitation:** The current strategy invalidates the entire cache whenever a new comment is added.
 - **Improvement:** Implement fine-grained cache invalidation:
 
-  - When a new post is created:
-    - Invalidate the cache related to paginated post listings (e.g., /posts?page=1), since the pagination order could change.
   - When a new comment is added:
     - Invalidate the cache for:
       - The post listing (if it includes comment counts or metadata affected by the comment).
