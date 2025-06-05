@@ -1,0 +1,157 @@
+type: collection.insomnia.rest/5.0
+name: Scratch Pad
+meta:
+  id: wrk_scratchpad
+  created: 1740680288801
+  modified: 1740680288801
+collection:
+  - name: Blog post api
+    meta:
+      id: fld_aadd8b2e5579430fad9ee663fc22b218
+      created: 1749137728340
+      modified: 1749155378292
+      sortKey: -1749137728340
+    children:
+      - url: localhost:3000/api/posts
+        name: Create blog post
+        meta:
+          id: req_efa66bd9f73f444b91f10a138d64f4ef
+          created: 1749136507163
+          modified: 1749150905049
+          isPrivate: false
+          sortKey: -1749137742394
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"title": "Post 100000",
+            	"content": "Meu conteúdo do post 1"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/api/posts/1
+        name: Get blog post by id
+        meta:
+          id: req_49ea02b7312b4c71bfc48bb8f2056811
+          created: 1749137688919
+          modified: 1749152219773
+          isPrivate: false
+          sortKey: -1749137742494
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/api/posts/
+        name: Get all blog posts
+        meta:
+          id: req_185631462e474008b69fad7e717c6cd5
+          created: 1749137778900
+          modified: 1749154591939
+          isPrivate: false
+          sortKey: -1749137742444
+        method: GET
+        parameters:
+          - id: pair_c3fdd80b00554d778eb36ff912b0572d
+            disabled: true
+          - id: pair_720a20266b394ca290347da0ee12413a
+            name: limit
+            value: "30"
+            disabled: true
+          - id: pair_d57e213314fe47fbbb640862b583ef77
+            name: page
+            value: "1"
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/api/posts/150/comments
+        name: Create blog comment
+        meta:
+          id: req_a584b7fa83594f48bc25a2dc017763b0
+          created: 1749138132233
+          modified: 1749154627986
+          isPrivate: false
+          sortKey: -1748719080298.5
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"content": "Meu comentário do post ascsacascasc1"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1740680295674
+    modified: 1744865529699
+  cookies:
+    - key: ARRAffinity
+      value: 79e06db539acb57119e709978d2cf1da299e8341753d6f6345007fcab3f69bc5
+      domain: contactmanager-g0cacwhae6fadxh8.brazilsouth-01.azurewebsites.net
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: false
+      creation: 2025-04-17T04:52:09.698Z
+      lastAccessed: 2025-04-17T04:52:09.698Z
+      id: e3cd7e71-bb71-4795-96f9-63dc85a75b5d
+    - key: ARRAffinitySameSite
+      value: 79e06db539acb57119e709978d2cf1da299e8341753d6f6345007fcab3f69bc5
+      domain: contactmanager-g0cacwhae6fadxh8.brazilsouth-01.azurewebsites.net
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: false
+      creation: 2025-04-17T04:52:09.698Z
+      lastAccessed: 2025-04-17T04:52:09.698Z
+      sameSite: none
+      id: 0497db13-de16-4fe4-aee7-ba6b41001d20
+environments:
+  name: Base Environment
+  meta:
+    id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1740680295598
+    modified: 1740680295598
+    isPrivate: false
