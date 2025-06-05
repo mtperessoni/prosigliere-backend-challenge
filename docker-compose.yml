@@ -1,4 +1,20 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blog_app
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/blog_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=blog_redis_secure_password_2024
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: postgres:latest
     container_name: blog_postgres
@@ -16,9 +32,14 @@ services:
     container_name: blog_redis
     ports:
       - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=blog_redis_secure_password_2024
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --requirepass blog_redis_secure_password_2024 --appendonly yes
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
 
 volumes:
   postgres_data:
