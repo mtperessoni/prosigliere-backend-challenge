@@ -61,17 +61,17 @@ This improves read performance and reduces the load on the database for frequent
 
 ## 🏗️ Areas for Improvement
 
-### 1. API Documentation with Swagger (OpenAPI)
+### 1. **API Documentation with Swagger (OpenAPI)**
 
 - **Current Limitation**: The API currently lacks formal documentation, which may lead to confusion for developers consuming the API and increase onboarding time.
 - **Improvement**: Integrate Swagger (via tools like @nestjs/swagger) to automatically generate and serve OpenAPI documentation.
 
-### 2. Integration and End-to-End (E2E) Testing
+### 2. **Integration and End-to-End (E2E) Testing**
 
 - **Current Limitation**: The project already includes unit tests to validate individual components and business rules. However, there are no integration or end-to-end (E2E) tests implemented to ensure that the different parts of the system work correctly together.
 - **Improvement**: Add integration and E2E tests to increase confidence in the system's stability and correctness in real-world scenarios.
 
-### 3. **Cache Invalidation for Comments**
+### 3. **Cache Invalidation**
 
 - **Current Limitation:** The current strategy invalidates the entire cache whenever a new post or comment is added.
 - **Improvement:** Implement fine-grained cache invalidation:
