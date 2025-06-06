@@ -59,19 +59,18 @@ In the `insomnia` folder, you'll find an `api.yaml` file containing a collection
 
 This improves read performance and reduces the load on the database for frequently requested data.
 
+## 📚 API Documentation
+
+The API has interactive documentation available via Swagger. After running the project, you can access it at: http://localhost:3000/api/docs
+
 ## 🏗️ Next Steps
 
-### 1. **API Documentation with Swagger (OpenAPI)**
-
-- **Current Limitation**: The API currently lacks formal documentation, which may lead to confusion for developers consuming the API and increase onboarding time.
-- **Improvement**: Integrate Swagger (via tools like @nestjs/swagger) to automatically generate and serve OpenAPI documentation.
-
-### 2. **Integration and End-to-End (E2E) Testing**
+### 1. **Integration and End-to-End (E2E) Testing**
 
 - **Current Limitation**: The project already includes unit tests to validate individual components and business rules. However, there are no integration or end-to-end (E2E) tests implemented to ensure that the different parts of the system work correctly together.
 - **Improvement**: Add integration and E2E tests to increase confidence in the system's stability and correctness in real-world scenarios.
 
-### 3. **Cache Invalidation**
+### 2. **Cache Invalidation**
 
 - **Current Limitation:** The current strategy invalidates the entire cache whenever a new comment is added.
 - **Improvement:** Implement fine-grained cache invalidation:
@@ -81,7 +80,7 @@ This improves read performance and reduces the load on the database for frequent
       - The post listing (if it includes comment counts or metadata affected by the comment).
       - The specific post detail (/posts/:id), since the post's comment count or latest comment may change.
 
-### 4. **Asynchronous Post Creation**
+### 3. **Asynchronous Post Creation**
 
 - **Improvement:** Move the post creation process to a message queue (e.g., RabbitMQ, AWS SQS, Kafka).
 - **Benefits:**
@@ -92,7 +91,7 @@ This improves read performance and reduces the load on the database for frequent
   - Adds complexity in error handling, retries, and monitoring.
   - Potential delay between request and the actual availability of the post.
 
-### 5. **Optimizing Count Operations**
+### 4. **Optimizing Count Operations**
 
 - **Problem:** Counting the number of posts or comments (`SELECT COUNT(*)`) on large tables can become a performance bottleneck, even with caching.
 - **Improvement:** Introduce a dedicated table to store the counts of:
