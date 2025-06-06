@@ -4,13 +4,14 @@ import { GetPostsUseCase } from '../use-cases/get-posts/get-posts.use-case';
 import { GetPostByIdUseCase } from '../use-cases/get-post/get-post-by-id.use-case';
 import { AddCommentUseCase } from '../use-cases/add-comment/add-comment.use-case';
 import { BlogPost } from '../domain/entities/blog-post.entity';
-import { Comment } from '../domain/entities/comment.entity';
 import { CreatePostDto } from './dto/request/create-post.dto';
 import { AddCommentDto } from './dto/request/add-comment.dto';
 import { PaginationDto } from './dto/request/pagination.dto';
 import { PaginatedResult } from '@/shared/interfaces/pagination/pagination.interface';
 import { PostSummaryDto } from './dto/response/post-summary.dto';
 import { ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { PostDetailsDto } from './dto/response/post-details.dto';
+import { CommentDetailsDto } from './dto/response/comment-details.dto';
 
 @Controller('posts')
 export class PostController {
@@ -42,11 +43,12 @@ export class PostController {
   @ApiResponse({
     status: 201,
     description: 'The post has been successfully created',
-    type: BlogPost,
+    type: PostDetailsDto,
   })
   @Post()
   async createPost(@Body() data: CreatePostDto): Promise<BlogPost> {
-    return this.createPostUseCase.execute(data);
+    const result = await this.createPostUseCase.execute(data);
+    return new PostDetailsDto(result);
   }
 
   @ApiOperation({ summary: 'Get a post by ID' })
@@ -54,11 +56,12 @@ export class PostController {
   @ApiResponse({
     status: 200,
     description: 'Returns the post with the specified ID',
-    type: BlogPost,
+    type: PostDetailsDto,
   })
   @Get(':id')
-  async getPostById(@Param('id', ParseIntPipe) id: number): Promise<BlogPost> {
-    return this.getPostByIdUseCase.execute(id);
+  async getPostById(@Param('id', ParseIntPipe) id: number): Promise<PostDetailsDto> {
+    const result = await this.getPostByIdUseCase.execute(id);
+    return new PostDetailsDto(result);
   }
 
   @ApiOperation({ summary: 'Add a comment to a post' })
@@ -66,13 +69,14 @@ export class PostController {
   @ApiResponse({
     status: 201,
     description: 'The comment has been successfully added',
-    type: Comment,
+    type: CommentDetailsDto,
   })
   @Post(':id/comments')
   async addComment(
     @Param('id', ParseIntPipe) postId: number,
     @Body() data: AddCommentDto,
-  ): Promise<Comment> {
-    return this.addCommentUseCase.execute(postId, data.content);
+  ): Promise<CommentDetailsDto> {
+    const result = await this.addCommentUseCase.execute(postId, data.content);
+    return new CommentDetailsDto(result);
   }
 }
