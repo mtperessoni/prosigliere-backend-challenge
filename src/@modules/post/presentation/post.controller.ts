@@ -10,7 +10,9 @@ import { AddCommentDto } from './dto/request/add-comment.dto';
 import { PaginationDto } from './dto/request/pagination.dto';
 import { PaginatedResult } from '@/shared/interfaces/pagination/pagination.interface';
 import { PostSummaryDto } from './dto/response/post-summary.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
+@ApiTags('posts')
 @Controller('posts')
 export class PostController {
   constructor(
@@ -20,6 +22,14 @@ export class PostController {
     private readonly addCommentUseCase: AddCommentUseCase,
   ) {}
 
+  @ApiOperation({ summary: 'Get all posts with pagination' })
+  @ApiQuery({ type: PaginationDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a paginated list of posts',
+    type: PostSummaryDto,
+    isArray: true,
+  })
   @Get()
   async getAllPosts(@Query() pagination: PaginationDto): Promise<PaginatedResult<PostSummaryDto>> {
     const result = await this.getPostsUseCase.execute(pagination);
@@ -29,16 +39,36 @@ export class PostController {
     };
   }
 
+  @ApiOperation({ summary: 'Create a new post' })
+  @ApiResponse({
+    status: 201,
+    description: 'The post has been successfully created',
+    type: BlogPost,
+  })
   @Post()
   async createPost(@Body() data: CreatePostDto): Promise<BlogPost> {
     return this.createPostUseCase.execute(data);
   }
 
+  @ApiOperation({ summary: 'Get a post by ID' })
+  @ApiParam({ name: 'id', description: 'The ID of the post' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the post with the specified ID',
+    type: BlogPost,
+  })
   @Get(':id')
   async getPostById(@Param('id', ParseIntPipe) id: number): Promise<BlogPost> {
     return this.getPostByIdUseCase.execute(id);
   }
 
+  @ApiOperation({ summary: 'Add a comment to a post' })
+  @ApiParam({ name: 'id', description: 'The ID of the post' })
+  @ApiResponse({
+    status: 201,
+    description: 'The comment has been successfully added',
+    type: Comment,
+  })
   @Post(':id/comments')
   async addComment(
     @Param('id', ParseIntPipe) postId: number,
