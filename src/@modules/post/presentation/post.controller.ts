@@ -10,9 +10,8 @@ import { AddCommentDto } from './dto/request/add-comment.dto';
 import { PaginationDto } from './dto/request/pagination.dto';
 import { PaginatedResult } from '@/shared/interfaces/pagination/pagination.interface';
 import { PostSummaryDto } from './dto/response/post-summary.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
-@ApiTags('posts')
 @Controller('posts')
 export class PostController {
   constructor(
